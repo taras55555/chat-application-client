@@ -1,0 +1,14 @@
+body > div {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.auth-prompt-main {
+  text-align: center;
+}
+
+.auth-prompt-main > section {
+    padding: 25px;
+}
+
