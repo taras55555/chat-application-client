@@ -1,22 +1,15 @@
 import './ConversationList.css'
-import { useAuth } from "../../hooks/useAuth"
 import SearchField from "../InputFields/SearchField"
 import { useApi } from '../../hooks/useApi'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-export default function ConversationList() {
+export default function ConversationList({ conversationList, name }) {
 
     const { request, loading, error } = useApi()
-    const { id, name } = useAuth()
+    
     const [searchFieldValue, setSearchFieldValue] = useState('')
     const [foundUsers, setFoundUsers] = useState([])
-    const [conversationList, setConversationList] = useState([])
-
-    useEffect(() => {
-        request(`${import.meta.env.VITE_BACKEND}/messages`)
-            .then(data => setConversationList(data))
-    }, [])
 
     useEffect(() => {
 
@@ -32,20 +25,13 @@ export default function ConversationList() {
 
     }, [searchFieldValue])
 
-    // function handleNewConversation(participantId) {
-    //     console.log('run conversation ' + participantId)
-
-    //     request(`${import.meta.env.VITE_BACKEND}/new-conversation`, `POST`, {participantId})
-    //             .then(data => setFoundUsers(data))
-    // }
-
     return (
         <>
             <section className="user">
                 {name}
             </section>
 
-            <section className="sear-field">
+            <section className="seararch-field">
                 <SearchField
                     searchFieldValue={searchFieldValue}
                     setSearchFieldValue={setSearchFieldValue}
@@ -79,6 +65,15 @@ export default function ConversationList() {
                     <ul>
                         {conversationList.map((contact) => {
 
+                            const [companionName] = Object.values(contact.memberNames)
+
+                            return (
+                                <Link to={`/chat/${contact.members[0]}`} className='conversation-card'>
+                                    <p>{companionName}</p>
+                                    <p>{contact.chatHistory[0]['message']}</p>
+                                    <p>{contact.lastActivity}</p>
+                                </Link>
+                            )
                         })}
                     </ul>
                 </nav>

@@ -1,56 +1,53 @@
-import { useParams } from "react-router-dom"
+import { useOutletContext, useParams } from "react-router-dom"
 import { useApi } from "../../hooks/useApi"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import MessageField from "../InputFields/MessageField"
 
 import './PrivateConversation.css'
-import { useAuth } from "../../hooks/useAuth"
 
 export default function PrivateConversation() {
-    const { id, name } = useAuth()
-    const [currentUserInfo, setCurrentUserInfo] = useState({})
-    const [chatHistory, setChatHistory] = useState([])
-    const { chatId } = useParams()
+    const { chat, id: me, chatId, participantUser } = useOutletContext()
+    const { chatHistory = [], memberNames = {} } = chat
     const { request, loading, error } = useApi()
     const [message, setmessage] = useState('')
+    const participantName = participantUser?.user?.name
+    const [participantsWithoutMe] = Object.keys(memberNames).filter(id => id !== me).length === 0 ? [chatId] : Object.keys(memberNames).filter(id => id !== me)
+    const ws = useRef(null)
 
     useEffect(() => {
-        request(`${import.meta.env.VITE_BACKEND}/user/${chatId}`)
-            .then(data => {
-                data.user.id = data.user._id
-                delete data.user._id
-                setCurrentUserInfo(data.user)
-            })
+        ws.current = new WebSocket('ws://localhost:3000')
 
-        request(`${import.meta.env.VITE_BACKEND}/messages/${chatId}`)
-            .then(data => setChatHistory(data))
-    }, [chatId])
+        return () => ws.current.close()
+    }, [])
 
-    function handleMessageSend() {
+    async function handleMessageSend() {
+        if (message) {
+            await request(`${import.meta.env.VITE_BACKEND}/messages`, `POST`, { participantsWithoutMe, message })
 
-        const participantId = currentUserInfo.id
-        request(`${import.meta.env.VITE_BACKEND}/messages`, `POST`, { participantId, message })
-
+            if (participantsWithoutMe && ws.current.readyState === WebSocket.OPEN) {
+                console.log(`SOCKET OPEN`)
+                ws.current.send(participantsWithoutMe);
+            }
+            setmessage('')
+        }
     }
 
     return (
         <main>
 
             <header>
-                {currentUserInfo.name}
+                {participantName}
             </header>
 
             <section className="chat-history">
                 CHAT HISTORY
                 {chatHistory.map((item) => {
 
-                    const { sender, message, timeSent } = item
-
-                    const senderName = currentUserInfo.id === sender ? currentUserInfo.name : name
+                    const { sender, currentUserName, message, timeSent } = item
 
                     return (
-                        <div className={`message-container ${currentUserInfo.id === sender ? '' : 'current-user'}`}>
-                            <p>{senderName}</p>
+                        <div className={`message-container ${me !== sender ? '' : 'current-user'}`}>
+                            <p>{currentUserName}</p>
                             <p>{message}</p>
                             <p>{timeSent}</p>
                         </div>

@@ -2,6 +2,10 @@
   background-color: var(--color-secondary);
 }
 
-.sear-field {
+.search-field {
   background-color: var(--color-secondary);
+}
+
+.conversation-card {
+  padding: 10px;
 }
