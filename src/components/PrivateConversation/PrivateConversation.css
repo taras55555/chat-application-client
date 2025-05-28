@@ -1,9 +1,14 @@
 .message-container {
-
-    padding: 15px 0;
-
+  padding: 15px 0;
 }
 
 .current-user {
-    text-align: right;
+  text-align: right;
+}
+
+.message-input-container {
+  position: sticky;
+  bottom: 0;
+  background-color: var(--color-secondary);
+  padding: 10px;
 }

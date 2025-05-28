@@ -26,7 +26,9 @@ export default function PrivateConversation() {
 
             if (participantsWithoutMe && ws.current.readyState === WebSocket.OPEN) {
                 console.log(`SOCKET OPEN`)
-                ws.current.send(participantsWithoutMe);
+
+                ws.current.send(JSON.stringify({ participantsWithoutMe, me }));
+
             }
             setmessage('')
         }
@@ -55,13 +57,14 @@ export default function PrivateConversation() {
                 })}
             </section>
 
-            <section>
-                <MessageField
-                    messageFieldValue={message}
-                    setMessageFieldValue={setmessage}
-                    handleMessageSend={handleMessageSend}
-                />
-            </section>
+
+            <MessageField
+                className={`message-input-container`}
+                messageFieldValue={message}
+                setMessageFieldValue={setmessage}
+                handleMessageSend={handleMessageSend}
+            />
+
 
         </main>
     )

@@ -65,8 +65,6 @@ export default function ChatWindow() {
                     conversationList={conversationList}
                     name={name}
                 />
-
-                {socketEvent}
             </aside>
 
             <section className='private-conversation'>
