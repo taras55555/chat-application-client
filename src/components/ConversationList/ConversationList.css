@@ -6,6 +6,24 @@
   background-color: var(--color-secondary);
 }
 
+.conversation-list {
+  color: var(--color-secondary);
+  background-color: var(--color-primary);
+}
+
 .conversation-card {
+  color: var(--color-text);
+  text-decoration: none;
   padding: 10px;
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  grid-template-rows: auto auto;
+}
+
+.last-activity {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 export default function ConversationList({ conversationList, name }) {
 
     const { request, loading, error } = useApi()
-    
+
     const [searchFieldValue, setSearchFieldValue] = useState('')
     const [foundUsers, setFoundUsers] = useState([])
 
@@ -28,14 +28,13 @@ export default function ConversationList({ conversationList, name }) {
     return (
         <>
             <section className="user">
-                {name}
-            </section>
-
-            <section className="seararch-field">
-                <SearchField
-                    searchFieldValue={searchFieldValue}
-                    setSearchFieldValue={setSearchFieldValue}
-                />
+                <p>{name}</p>
+                <p>
+                    <SearchField
+                        searchFieldValue={searchFieldValue}
+                        setSearchFieldValue={setSearchFieldValue}
+                    />
+                </p>
             </section>
 
             <section className='conversation-list'>
@@ -67,11 +66,17 @@ export default function ConversationList({ conversationList, name }) {
 
                             const [companionName] = Object.values(contact.memberNames)
 
+                            const formattedDate = new Date(contact.lastActivity).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',  // 'May'
+                                day: 'numeric'
+                            })
+
                             return (
                                 <Link to={`/chat/${contact.members[0]}`} className='conversation-card'>
-                                    <p>{companionName}</p>
-                                    <p>{contact.chatHistory[0]['message']}</p>
-                                    <p>{contact.lastActivity}</p>
+                                    <p className='companion-name'>{companionName}</p>
+                                    <p className='message-date last-activity'>{formattedDate}</p>
+                                    <p className='last-message'>{contact.chatHistory[0]['message']}</p>
                                 </Link>
                             )
                         })}

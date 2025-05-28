@@ -35,9 +35,9 @@ export default function PrivateConversation() {
     }
 
     return (
-        <main>
+        <main className="private-conversation-main">
 
-            <header>
+            <header className="private-conversation-header">
                 {participantName}
             </header>
 
@@ -46,13 +46,30 @@ export default function PrivateConversation() {
                 {chatHistory.map((item) => {
 
                     const { sender, currentUserName, message, timeSent } = item
+                    const options = {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                    };
+                    const formattedDate = new Date(timeSent).toLocaleString('en-US', options)
+                    const senderClass = me !== sender ? '' : ' current-user'
+
 
                     return (
-                        <div className={`message-container ${me !== sender ? '' : 'current-user'}`}>
-                            <p>{currentUserName}</p>
-                            <p>{message}</p>
-                            <p>{timeSent}</p>
-                        </div>
+                        <>
+                            <div className={`message-container${senderClass}`}>
+                                <div className="message">
+                                    <p>{message}</p>
+                                </div>
+
+                                <div className="message-date">{formattedDate}</div>
+                            </div>
+
+
+                        </>
                     )
                 })}
             </section>
@@ -66,6 +83,6 @@ export default function PrivateConversation() {
             />
 
 
-        </main>
+        </main >
     )
 }
