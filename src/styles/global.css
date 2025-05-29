@@ -1,12 +1,44 @@
 html {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 body {
-    color: var(--color-text);
-    background-color: var(--color-background);
+  color: var(--color-text);
+  background-color: var(--color-background);
 }
 
 main {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.search-input-position {
+  position: relative;
+}
+
+.send-input-position {
+  position: sticky;
+  bottom: 0;
+}
+
+.input-wrapper {
+  height: 55px;
+  background-color: var(--color-secondary);
+  place-content: center;
+}
+
+.input-wrapper input {
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 40px 10px 10px;
+}
+
+.send-btn {
+  position: absolute;
+  cursor: pointer;
+  border: none;
+  background-color: unset;
+  right: 25px;
+  transform: translateY(-50%);
+  top: 50%;
 }

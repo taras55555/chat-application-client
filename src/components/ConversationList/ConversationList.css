@@ -2,22 +2,43 @@
   background-color: var(--color-secondary);
 }
 
+.user > * {
+  padding: 10px 15px;
+}
+
+.user-data {
+  display: flex;
+  justify-content: space-between;
+}
+
 .search-field {
   background-color: var(--color-secondary);
 }
 
+.conversation-block {
+  color: var(--color-primary);
+  background-color: var(--color-background);
+}
+
+.conversation-block > * {
+  padding: 10px 15px;
+}
+
 .conversation-list {
-  color: var(--color-secondary);
-  background-color: var(--color-primary);
+  display: grid;
+  gap: 20px;
 }
 
 .conversation-card {
   color: var(--color-text);
   text-decoration: none;
-  padding: 10px;
   display: grid;
   grid-template-columns: 7fr 3fr;
   grid-template-rows: auto auto;
+}
+
+.last-message {
+  color: var(--color-primary);
 }
 
 .last-activity {

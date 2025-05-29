@@ -4,12 +4,10 @@ export const useApi = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    
-
-    const request = async (url, method = 'GET', body = null, headers = {}) => {
+    const request = async (url, method = 'GET', body = null, headers = {}, credentials = 'include') => {
         setLoading(true);
         setError(null);
-        
+    
         try {
             const res = await fetch(url, {
                 method,
@@ -17,7 +15,7 @@ export const useApi = () => {
                     'Content-Type': 'application/json',
                 },
                 body: body ? JSON.stringify(body) : null,
-                credentials: 'include',
+                credentials,
             });
 
             const data = await res.json();

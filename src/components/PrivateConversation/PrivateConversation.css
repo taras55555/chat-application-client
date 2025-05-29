@@ -1,22 +1,25 @@
-.private-conversation-main {
+.private-conversation {
   display: grid;
   grid-template-rows: 50px auto 50px;
   gap: 2px;
 }
 
+.private-conversation > * {
+  padding: 10px 15px;
+}
+
 .private-conversation-header {
   background-color: var(--color-secondary);
-  padding: 20px;
 }
 
 .message-container {
   display: grid;
   place-items: start;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
 }
 
 .message-container > * {
-  margin: 5px;
+  margin-bottom: 5px;
 }
 
 .current-user {
@@ -27,21 +30,15 @@
   max-width: 80%;
   padding: 5px 10px;
   border-radius: 10px;
-  background-color: var(--color-secondary);
+  background-color: var(--color-text);
+  color: var(--color-secondary);
 }
 
 .message-date {
   font-size: 1rem;
-  color: var(--color-secondary);
+  color: var(--color-primary);
 }
 
 .chat-history {
-  background-color: var(--color-primary);
-}
-
-.message-input-container {
-  position: sticky;
-  bottom: 0;
-  background-color: var(--color-secondary);
-  padding: 10px;
+  background-color: var(--color-background);
 }

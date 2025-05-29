@@ -4,26 +4,35 @@ import './ChatWindow.css'
 import { useEffect, useRef, useState } from 'react'
 import { useApi } from '../../hooks/useApi';
 import { useAuth } from '../../hooks/useAuth';
+import Toast from '../Toast/Toast';
+import { useNavigate } from 'react-router-dom'
 
 export default function ChatWindow() {
-    const { id, name } = useAuth()
-    const { chatId } = useParams()
-    const [socketEvent, setSocketEvent] = useState('')
     const ws = useRef(null);
-    const [conversationList, setConversationList] = useState([])
-    const [participantUser, setParticipantUser] = useState({})
+    const { id, name} = useAuth()
+    const { chatId } = useParams()
+
     const [chat, setChat] = useState([])
+    const [toastQueue, setToastQueue] = useState([]);
+    const [socketEvent, setSocketEvent] = useState({})
+    const [participantUser, setParticipantUser] = useState({})
+    const [conversationList, setConversationList] = useState([])
 
     const { request, loading, error } = useApi()
-
+    
+    const navigate = useNavigate()
     useEffect(() => {
-        request(`${import.meta.env.VITE_BACKEND}/messages`)
+        if (socketEvent.type === `notification`) {
+            setToastQueue(toasts => [...toasts, { message: `${socketEvent.participantName}: ${socketEvent.message}` }])
+        }
+
+        request(`http://${import.meta.env.VITE_BACKEND}/messages`)
             .then(data => {
                 setConversationList(data)
             })
 
         if (chatId) {
-            request(`${import.meta.env.VITE_BACKEND}/messages/${chatId}`)
+            request(`http://${import.meta.env.VITE_BACKEND}/message/${chatId}`)
                 .then(data => {
                     setChat(data)
                 })
@@ -34,10 +43,10 @@ export default function ChatWindow() {
 
     useEffect(() => {
         if (chatId) {
-            request(`${import.meta.env.VITE_BACKEND}/messages/${chatId}`)
+            request(`http://${import.meta.env.VITE_BACKEND}/message/${chatId}`)
                 .then(data => setChat(data))
 
-            request(`${import.meta.env.VITE_BACKEND}/user/${chatId}`)
+            request(`http://${import.meta.env.VITE_BACKEND}/user/${chatId}`)
                 .then(data => {
                     setParticipantUser(data)
                 })
@@ -46,10 +55,10 @@ export default function ChatWindow() {
     }, [chatId])
 
     useEffect(() => {
-        ws.current = new WebSocket('ws://localhost:3000')
-
+        ws.current = new WebSocket(`ws://${import.meta.env.VITE_BACKEND}`)
         ws.current.onmessage = (event) => {
-            setSocketEvent(event.data);
+            const { type, participantName = null, message = null } = JSON.parse(event.data)
+            setSocketEvent({ type, participantName, message });
         };
 
         return () => {
@@ -58,19 +67,30 @@ export default function ChatWindow() {
 
     }, [])
 
+    const handleLogOut = async () => {
+        await request(`http://${import.meta.env.VITE_BACKEND}/logout`, 'POST')
+        window.location.reload()   
+    }
+
     return (
-        <main className='chat-window-main'>
-            <aside className="sidebar">
-                <ConversationList
-                    conversationList={conversationList}
-                    name={name}
-                />
-            </aside>
+        <>
+            {toastQueue.length > 0 && <Toast toastQueue={toastQueue} setToastQueue={setToastQueue} />}
+            <main className='chat-window-main'>
+                <aside className="sidebar">
+                    <ConversationList
+                        conversationList={conversationList}
+                        name={name}
+                        id={id}
+                        handleLogOut={handleLogOut}
+                    />
+                </aside>
 
-            <section className='private-conversation'>
-                <Outlet context={{ chat, id, chatId, participantUser }} />
-            </section>
+                <section className='private-conversation'>
+                    <Outlet context={{ chat, id, chatId, participantUser }} />
+                </section>
 
-        </main>
+            </main>
+
+        </>
     )
 }

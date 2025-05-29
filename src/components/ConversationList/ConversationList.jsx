@@ -2,81 +2,99 @@ import './ConversationList.css'
 import SearchField from "../InputFields/SearchField"
 import { useApi } from '../../hooks/useApi'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { formatDate, generateItemKey } from '../../utils/commonUtils'
+import Button from '../Button/Button'
 
-export default function ConversationList({ conversationList, name }) {
-
+export default function ConversationList({ conversationList, name, id, handleLogOut }) {
     const { request, loading, error } = useApi()
-
+    
     const [searchFieldValue, setSearchFieldValue] = useState('')
     const [foundUsers, setFoundUsers] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
 
-        const liveSearchUsers = () =>
-            request(`${import.meta.env.VITE_BACKEND}/users/${searchFieldValue}`)
+        const liveSearchContacts = () => {
+            request(`http://${import.meta.env.VITE_BACKEND}/users/${searchFieldValue}`)
                 .then(data => setFoundUsers(data))
+        }
 
         if (searchFieldValue) {
-            liveSearchUsers()
+            liveSearchContacts()
         }
 
         return () => setFoundUsers([])
 
     }, [searchFieldValue])
 
+    
+
     return (
         <>
             <section className="user">
-                <p>{name}</p>
-                <p>
-                    <SearchField
-                        searchFieldValue={searchFieldValue}
-                        setSearchFieldValue={setSearchFieldValue}
-                    />
-                </p>
+
+                <section className='user-data'>
+                    <h2>{name}</h2>
+                    <Button value={'Log Out'} onClick={handleLogOut} />
+                </section>
+
+                <SearchField
+                    className={'input-wrapper search-input-position'}
+                    searchFieldValue={searchFieldValue}
+                    setSearchFieldValue={setSearchFieldValue}
+                />
             </section>
 
-            <section className='conversation-list'>
+            <section className='conversation-block'>
 
                 {foundUsers.length > 0 && (
                     <>
-                        <h2>Search new contact</h2>
+                        <h2>Matching contacts</h2>
                         <nav>
                             <ul>
                                 {foundUsers.map((contact) => {
 
-                                    return (<li key={contact._id}>
-                                        <p>{contact.name}</p>
-                                        <p>{contact.email}</p>
-                                        <Link to={`/chat/${contact._id}`}>
-                                            start conversation
+                                    return (
+                                        <Link
+                                            to={`/chat/${contact._id}`}
+                                            onClick={() => setFoundUsers([])}
+                                            className='conversation-card'
+                                        >
+                                            <li key={generateItemKey()}>
+                                                <p>{contact.name}</p>
+                                                <p>{contact.email}</p>
+
+                                                start conversation
+
+                                            </li>
                                         </Link>
-                                    </li>)
+                                    )
                                 })}
                             </ul>
                         </nav>
                     </>
                 )}
 
-                <h2>Chats</h2>
+                <h2>Existing Conversations</h2>
                 <nav>
-                    <ul>
+                    <ul className='conversation-list'>
                         {conversationList.map((contact) => {
+                            const lastMessage = contact.chatHistory?.[0]?.['message']
+                            const [[companionId, companionName]] = Object.entries(contact.memberNames)
+                                .filter(item => !item.includes(id))
 
-                            const [companionName] = Object.values(contact.memberNames)
-
-                            const formattedDate = new Date(contact.lastActivity).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'short',  // 'May'
-                                day: 'numeric'
-                            })
+                            const formattedDate = formatDate(contact.lastActivity, { year: 'numeric', month: 'short', day: 'numeric' })
 
                             return (
-                                <Link to={`/chat/${contact.members[0]}`} className='conversation-card'>
+                                <Link
+                                    key={generateItemKey()}
+                                    to={`/chat/${companionId}`}
+                                    className='conversation-card'
+                                >
                                     <p className='companion-name'>{companionName}</p>
                                     <p className='message-date last-activity'>{formattedDate}</p>
-                                    <p className='last-message'>{contact.chatHistory[0]['message']}</p>
+                                    {lastMessage && <p className='last-message'>{lastMessage}</p>}
                                 </Link>
                             )
                         })}
