@@ -26,7 +26,7 @@ export default function PrivateConversation() {
 
     async function handleMessageSend() {
         if (message) {
-            await request(`http://${import.meta.env.VITE_BACKEND}/messages`, `POST`, { participantsWithoutMe, message })
+            await request(`${import.meta.env.VITE_BACKEND}/messages`, `POST`, { participantsWithoutMe, message })
 
             if (participantsWithoutMe && ws.current.readyState === WebSocket.OPEN) {
                 ws.current.send(JSON.stringify({ participantsWithoutMe, me, isPredefined, participantName, message }));

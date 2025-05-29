@@ -12,7 +12,7 @@ export default function AuthPrompt() {
             </section>
 
             <section>
-                <a href={`http://${import.meta.env.VITE_BACKEND}/login/federated/google`}>
+                <a href={`${import.meta.env.VITE_BACKEND}/login/federated/google`}>
                     <Button value={`Sign in with Google`} />
                 </a>
             </section>

@@ -26,13 +26,13 @@ export default function ChatWindow() {
             setToastQueue(toasts => [...toasts, { message: `${socketEvent.participantName}: ${socketEvent.message}` }])
         }
 
-        request(`http://${import.meta.env.VITE_BACKEND}/messages`)
+        request(`${import.meta.env.VITE_BACKEND}/messages`)
             .then(data => {
                 setConversationList(data)
             })
 
         if (chatId) {
-            request(`http://${import.meta.env.VITE_BACKEND}/message/${chatId}`)
+            request(`${import.meta.env.VITE_BACKEND}/message/${chatId}`)
                 .then(data => {
                     setChat(data)
                 })
@@ -43,10 +43,10 @@ export default function ChatWindow() {
 
     useEffect(() => {
         if (chatId) {
-            request(`http://${import.meta.env.VITE_BACKEND}/message/${chatId}`)
+            request(`${import.meta.env.VITE_BACKEND}/message/${chatId}`)
                 .then(data => setChat(data))
 
-            request(`http://${import.meta.env.VITE_BACKEND}/user/${chatId}`)
+            request(`${import.meta.env.VITE_BACKEND}/user/${chatId}`)
                 .then(data => {
                     setParticipantUser(data)
                 })
@@ -68,7 +68,7 @@ export default function ChatWindow() {
     }, [])
 
     const handleLogOut = async () => {
-        await request(`http://${import.meta.env.VITE_BACKEND}/logout`, 'POST')
+        await request(`${import.meta.env.VITE_BACKEND}/logout`, 'POST')
         window.location.reload()   
     }
 

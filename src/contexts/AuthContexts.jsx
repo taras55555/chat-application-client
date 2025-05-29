@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         const fetchIsAuthorized = async () => {
-            const data = await request(`http://${import.meta.env.VITE_BACKEND}/user`)
+            const data = await request(`${import.meta.env.VITE_BACKEND}/user`)
             setUser(data)
         }
 

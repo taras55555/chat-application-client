@@ -16,7 +16,7 @@ export default function ConversationList({ conversationList, name, id, handleLog
     useEffect(() => {
 
         const liveSearchContacts = () => {
-            request(`http://${import.meta.env.VITE_BACKEND}/users/${searchFieldValue}`)
+            request(`${import.meta.env.VITE_BACKEND}/users/${searchFieldValue}`)
                 .then(data => setFoundUsers(data))
         }
 
