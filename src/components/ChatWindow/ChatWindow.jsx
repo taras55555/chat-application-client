@@ -55,7 +55,7 @@ export default function ChatWindow() {
     }, [chatId])
 
     useEffect(() => {
-        ws.current = new WebSocket(`ws://${import.meta.env.VITE_BACKEND}`)
+        ws.current = new WebSocket(`${import.meta.env.VITE_WEBSOCKET}`)
         ws.current.onmessage = (event) => {
             const { type, participantName = null, message = null } = JSON.parse(event.data)
             setSocketEvent({ type, participantName, message });

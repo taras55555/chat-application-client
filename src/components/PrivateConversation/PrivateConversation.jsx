@@ -19,7 +19,7 @@ export default function PrivateConversation() {
     const ws = useRef(null)
 
     useEffect(() => {
-        ws.current = new WebSocket(`ws://${import.meta.env.VITE_BACKEND}`)
+        ws.current = new WebSocket(`${import.meta.env.VITE_WEBSOCKET}`)
 
         return () => ws.current.close()
     }, [])
